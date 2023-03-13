@@ -1,5 +1,6 @@
 using Domain.Common;
 using Domain.SeedWork;
+using System;
 
 namespace Domain.Aggregates.FlightAggregate
 {
@@ -8,9 +9,18 @@ namespace Domain.Aggregates.FlightAggregate
         public string Name { get; private set; }
         public Price Price { get; private set; }
         public int Available { get; private set; }
+        public Guid FlightId { get; private set; }
 
         protected FlightRate()
         {
+        }
+
+        public FlightRate(string name, Price price, int available, Guid flightId)
+        {
+            Name = name;
+            Price = price;
+            Available = available;
+            FlightId = flightId;
         }
 
         public FlightRate(string name, Price price, int available)

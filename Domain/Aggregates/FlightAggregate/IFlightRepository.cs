@@ -10,5 +10,6 @@ namespace Domain.Aggregates.FlightAggregate
         void Update(Flight flight);
 
         Task<Flight> GetAsync(Guid flightId);
+        Task<FlightDto> Search(string flightCode);
     }
 }
