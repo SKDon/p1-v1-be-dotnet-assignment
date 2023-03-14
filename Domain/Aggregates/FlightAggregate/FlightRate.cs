@@ -6,12 +6,12 @@ namespace Domain.Aggregates.FlightAggregate
 {
     public class FlightRate : Entity
     {
-        public string Name { get; private set; }
-        public Price Price { get; private set; }
-        public int Available { get; private set; }
-        public Guid FlightId { get; private set; }
+        public string Name { get; set; }
+        public Price Price { get; set; }
+        public int Available { get; set; }
+        public Guid FlightId { get; set; }
 
-        protected FlightRate()
+        public FlightRate()
         {
         }
 
