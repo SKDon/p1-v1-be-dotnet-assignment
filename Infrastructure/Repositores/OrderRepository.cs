@@ -25,33 +25,32 @@ namespace Infrastructure.Repositores
 
         public OrderDto Add(Order order)
         {
-            var result = (from ep in _context.Flights
-                          join t in _context.FlightRates on ep.Id equals t.FlightId
-                          where t.FlightId.Equals(order.Id) && t.Name.Equals(order.Type)
-                          select new FlightRate
-                          { 
-                              Name = t.Name,
-                              Price = t.Price,
-                              Available = t.Available - order.Quantity,
-                              FlightId = t.FlightId
-                          }).FirstOrDefault();
 
-            var model = _context.FlightRates.Add(result).Entity;
+            var result = _context.FlightRates.SingleOrDefault(b => b.FlightId == order.Id && b.Name == order.Type);
+
+            if (result != null)
+            {
+                result.Available = result.Available - order.Quantity;
+            }
+
+            var model =  _context.FlightRates.Update(result).Entity;
+
+            _context.SaveChanges();
 
             var entity = (from ep in _context.Flights
                           join t in _context.FlightRates on ep.Id equals t.FlightId
-                          where t.FlightId.Equals(model.Id) 
+                          where t.Id.Equals(model.Id)
                           select new OrderDto
                           {
                               Name = t.Name,
-                              Price = t.Price,
+                              Price = t.Price.Value,
                               FlightId = t.FlightId,
                               DepartureAirportCode = _context.Airports.Single(e => e.Id == ep.DestinationAirportId).Code,
                               ArrivalAirportCode = _context.Airports.Single(e => e.Id == ep.OriginAirportId).Code,
                               Departure = ep.Departure
-                          }).FirstOrDefault();
+                          }).SingleOrDefault();
 
-            return entity; 
+            return entity;
         }
     }
 }
