@@ -4,6 +4,7 @@ using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Threading.Tasks;
 
 namespace API.Controllers
@@ -27,6 +28,7 @@ namespace API.Controllers
         public async Task<IActionResult> MakeOrder([FromBody] CreateOrderCommand command)
         {
             var model = await _mediator.Send(command);
+            Console.WriteLine($"Your Order has been Confirm Flight No: {model.FlightId} Class: {model.Name} Departure Airport Code {model.DepartureAirportCode}");
             return Ok(model);
         }
     }
