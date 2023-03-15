@@ -34,8 +34,14 @@ public class FlightsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAvailableFlights([FromBody] string flightNo)
     {
+        if (string.IsNullOrEmpty(flightNo))
+        {
+            return Ok(_flightRepository.Search());
 
-        return Ok(await _mediator.Send(new GetFlightDetailQuery { code = flightNo }));
-        //throw new NotImplementedException();
+        } else
+        {
+            return Ok(await _mediator.Send(new GetFlightDetailQuery { code = flightNo }));
+        }
+        
     }
 }

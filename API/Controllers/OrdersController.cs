@@ -1,4 +1,5 @@
 ﻿using API.Application.Commands;
+using API.Application.Queries.GetOrderDetail;
 using API.Application.ViewModels;
 using AutoMapper;
 using MediatR;
@@ -25,11 +26,12 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> MakeOrder([FromBody] CreateOrderCommand command)
+        public async Task<IActionResult> MakeOrder([FromBody] Guid id)
         {
-            var model = await _mediator.Send(command);
-            Console.WriteLine($"Your Order has been Confirm Flight No: {model.FlightId} Class: {model.Name} Departure Airport Code {model.DepartureAirportCode}");
-            return Ok(model);
+            return Ok(await _mediator.Send(new GetOrderDetailQuery { Id = id }));
+            //var model = await _mediator.Send(command);
+            //Console.WriteLine($"Your Order has been Confirm Flight No: {model.FlightId} Class: {model.Name} Departure Airport Code {model.DepartureAirportCode}");
+            //return Ok(model);
         }
     }
 }

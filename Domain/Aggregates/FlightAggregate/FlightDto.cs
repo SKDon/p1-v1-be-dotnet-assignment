@@ -5,6 +5,7 @@ namespace Domain.Aggregates.FlightAggregate
 {
     public  class FlightDto
     {
+        public Guid Id { get; set; }
         public string DepartureAirportCode { get; set;}
         public string ArrivalAirportCode { get; set; }
         public DateTimeOffset Departure { get; set; }

@@ -23,6 +23,22 @@ namespace Infrastructure.Repositores
             _context = context;
         }
 
+        public Task<List<OrderDetailsDto>> GetOrderById(Guid flighttId)
+        {
+            var result = (from ep in _context.Flights
+                          join t in _context.FlightRates on ep.Id equals t.FlightId
+                          where ep.Id.Equals(flighttId)
+                          select new OrderDetailsDto
+                          {
+                              Name = t.Name,
+                              Price = t.Price.Value,
+                              Available = t.Available,
+                              FlightId = ep.Id
+                          }).ToList();
+
+            return Task.FromResult(result);
+        }
+
         public OrderDto Add(Order order)
         {
 

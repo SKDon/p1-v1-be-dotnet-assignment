@@ -3,8 +3,10 @@ using API.Application.ViewModels;
 using AutoMapper;
 using Domain.Aggregates.FlightAggregate;
 using MediatR;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace API.Application.Queries.GetFlightDetail
 {
@@ -21,8 +23,11 @@ namespace API.Application.Queries.GetFlightDetail
 
         public async Task<FlightViewModel> Handle(GetFlightDetailQuery request, CancellationToken cancellationToken)
         {
+   
             var model = await _flightRepository.Search(request.code);
+
             return _mapper.Map<FlightViewModel>(model);
+
         }
 
 

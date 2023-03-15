@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Domain.Aggregates.FlightAggregate
@@ -6,10 +7,9 @@ namespace Domain.Aggregates.FlightAggregate
     public interface IFlightRepository
     {
         Flight Add(Flight flight);
-
         void Update(Flight flight);
-
         Task<Flight> GetAsync(Guid flightId);
         Task<FlightDto> Search(string flightCode);
+        Task<List<FlightDto>> Search();
     }
 }
