@@ -10,5 +10,6 @@ namespace API.Application.ViewModels
         public DateTimeOffset Departure { get; set; }
         public DateTimeOffset Arrival { get; set; }
         public decimal PriceFrom { get; set; }
+        public string Name { get; set; }
     }
 }

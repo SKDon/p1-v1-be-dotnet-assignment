@@ -2,7 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using API.ApiResponses;
-using API.Application.Queries.GetFlightDetail;
+using API.Application.Queries.GetAllFlight;
+using API.Application.Queries.GetFlightById;
 using AutoMapper;
 using Domain.Aggregates.FlightAggregate;
 using Infrastructure.Repositores;
@@ -20,28 +21,29 @@ public class FlightsController : ControllerBase
     private readonly ILogger<FlightsController> _logger;
     private readonly IMediator _mediator;
     private readonly IMapper _mapper;
-    private readonly IFlightRepository _flightRepository;
 
-    public FlightsController(ILogger<FlightsController> logger, IMediator mediator, IMapper mapper, IFlightRepository flightRepository)
+    public FlightsController(ILogger<FlightsController> logger, IMediator mediator, IMapper mapper)
     {
         _logger = logger;
         _mediator = mediator;
         _mapper = mapper;
-        _flightRepository = flightRepository;
     }
 
-    [HttpPost]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetAvailableFlights([FromBody] string flightNo)
+    [HttpGet]
+    public async Task<IActionResult> GetAllFlights()
     {
-        if (string.IsNullOrEmpty(flightNo))
-        {
-            return Ok(_flightRepository.Search());
-
-        } else
-        {
-            return Ok(await _mediator.Send(new GetFlightDetailQuery { code = flightNo }));
-        }
-        
+        var query = new GetAllFlightsQuery();
+        var result = await _mediator.Send(query);
+        return Ok(result);
     }
+
+    [HttpGet("{flightId}")]
+    public async Task<IActionResult> GetFlight(Guid flightId)
+    {
+        var query = new GetFlightByIdQuery(flightId);
+        var result = await _mediator.Send(query);
+        return result != null ? (IActionResult)Ok(result) : NotFound();
+    }
+
+
 }

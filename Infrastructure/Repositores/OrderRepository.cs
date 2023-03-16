@@ -23,50 +23,30 @@ namespace Infrastructure.Repositores
             _context = context;
         }
 
-        public Task<List<OrderDetailsDto>> GetOrderById(Guid flighttId)
+        public Flight GetAsync(Guid flightId)
         {
-            var result = (from ep in _context.Flights
-                          join t in _context.FlightRates on ep.Id equals t.FlightId
-                          where ep.Id.Equals(flighttId)
-                          select new OrderDetailsDto
-                          {
-                              Name = t.Name,
-                              Price = t.Price.Value,
-                              Available = t.Available,
-                              FlightId = ep.Id
-                          }).ToList();
-
-            return Task.FromResult(result);
+            return  _context.Flights.SingleOrDefault(o => o.Id == flightId);
         }
 
-        public OrderDto Add(Order order)
+
+        public Guid Add(Order order)
         {
+            var result = GetAsync(order.Id);
 
-            var result = _context.FlightRates.SingleOrDefault(b => b.FlightId == order.Id && b.Name == order.Type);
+            var entity = _context.Flights.Update(result).Entity;
 
-            if (result != null)
-            {
-                result.Available = result.Available - order.Quantity;
-            }
+            _context.SaveChangesAsync();
 
-            var model =  _context.FlightRates.Update(result).Entity;
+            return entity.Id;
 
-            _context.SaveChanges();
-
-            var entity = (from ep in _context.Flights
-                          join t in _context.FlightRates on ep.Id equals t.FlightId
-                          where t.Id.Equals(model.Id)
-                          select new OrderDto
-                          {
-                              Name = t.Name,
-                              Price = t.Price.Value,
-                              FlightId = t.FlightId,
-                              DepartureAirportCode = _context.Airports.Single(e => e.Id == ep.DestinationAirportId).Code,
-                              ArrivalAirportCode = _context.Airports.Single(e => e.Id == ep.OriginAirportId).Code,
-                              Departure = ep.Departure
-                          }).SingleOrDefault();
-
-            return entity;
         }
+
+        public FlightRate GetOrderById(Guid flightId)
+        {
+            return _context.FlightRates.SingleOrDefault(o => o.FlightId == flightId);
+
+        }
+
+
     }
 }

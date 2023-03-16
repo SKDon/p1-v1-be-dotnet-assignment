@@ -8,8 +8,7 @@ namespace Domain.Aggregates.FlightAggregate
     {
         Flight Add(Flight flight);
         void Update(Flight flight);
-        Task<Flight> GetAsync(Guid flightId);
-        Task<FlightDto> Search(string flightCode);
-        Task<List<FlightDto>> Search();
+        Task<FlightDto> GetAsync(Guid flightId);
+        Task<List<FlightDto>> All();
     }
 }

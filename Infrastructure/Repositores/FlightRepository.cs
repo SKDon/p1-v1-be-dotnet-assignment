@@ -1,5 +1,6 @@
 ﻿using Domain.Aggregates.FlightAggregate;
 using Domain.SeedWork;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,31 +34,30 @@ namespace Infrastructure.Repositores
         }
 
 
-        public Task<Flight> GetAsync(Guid flightId)
+        public Task<FlightDto> GetAsync(Guid flightId)
         {
-            throw new NotImplementedException();
-        }
 
-        public Task<FlightDto> Search(string flightCode)
-        {
             var result = (from ep in _context.Flights
                           join e in _context.Airports on ep.OriginAirportId equals e.Id
                           join t in _context.FlightRates on ep.Id equals t.FlightId
-                          where ep.DestinationAirportId.Equals(_context.Airports.Single(e => e.Code == flightCode).Id) && t.Price != null
-                          select new FlightDto
+                          where ep.Id.Equals(flightId) && t.Price != null
+                          select new FlightDto()
                           {
                               Id = ep.Id,
                               DepartureAirportCode = _context.Airports.Single(e => e.Id == ep.DestinationAirportId).Code,
                               ArrivalAirportCode = _context.Airports.Single(e => e.Id == ep.OriginAirportId).Code,
                               Departure = ep.Departure,
                               Arrival = ep.Arrival,
-                              PriceFrom = t.Price.Value
+                              PriceFrom = t.Price.Value,
+                              Name = t.Name
                           }).OrderBy(a => a.PriceFrom).FirstOrDefault();
 
             return Task.FromResult(result);
+
         }
 
-        public Task<List<FlightDto>> Search()
+
+        public Task<List<FlightDto>> All()
         {
             var result = (from ep in _context.Flights
                           join e in _context.Airports on ep.OriginAirportId equals e.Id
@@ -72,8 +72,6 @@ namespace Infrastructure.Repositores
                               Arrival = ep.Arrival,
                               PriceFrom = t.Price.Value
                           }).ToList();
-
-
             return Task.FromResult(result);
         }
     }

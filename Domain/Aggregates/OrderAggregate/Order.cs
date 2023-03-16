@@ -9,18 +9,18 @@ namespace Domain.Aggregates.OrderAggregate
 {
     public class Order : Entity, IAggregateRoot
     {
-        //public Guid Id { get; set; }
-        public string Type { get; set; }
+      
+        public string Name { get; set; }
         public int Quantity { get; set; }
 
         public Order()
         {
         }
 
-        public Order(Guid id, string type, int quantity)
+        public Order(Guid id, string name, int quantity)
         {
             Id = id;
-            Type = type;
+            Name = name;
             Quantity = quantity;
         }
     }

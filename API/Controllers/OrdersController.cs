@@ -1,7 +1,7 @@
 ﻿using API.Application.Commands;
-using API.Application.Queries.GetOrderDetail;
-using API.Application.ViewModels;
+using API.Application.Queries.GetFlightById;
 using AutoMapper;
+using Domain.Aggregates.OrderAggregate;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -14,24 +14,32 @@ namespace API.Controllers
     [Route("[controller]")]
     public class OrdersController : ControllerBase
     {
+        private readonly IOrderRepository _orderRepository;
         private readonly ILogger<OrdersController> _logger;
         private readonly IMediator _mediator;
         private readonly IMapper _mapper;
 
-        public OrdersController(ILogger<OrdersController> logger, IMediator mediator, IMapper mapper)
+        public OrdersController(IOrderRepository orderRepository, ILogger<OrdersController> logger, IMediator mediator, IMapper mapper)
         {
+            _orderRepository = orderRepository;
             _logger = logger;
             _mediator = mediator;
             _mapper = mapper;
         }
 
-        [HttpPost]
-        public async Task<IActionResult> MakeOrder([FromBody] Guid id)
+        [HttpGet("{flightId}")]
+        public async Task<IActionResult> GetOrder(Guid flightId)
         {
-            return Ok(await _mediator.Send(new GetOrderDetailQuery { Id = id }));
-            //var model = await _mediator.Send(command);
-            //Console.WriteLine($"Your Order has been Confirm Flight No: {model.FlightId} Class: {model.Name} Departure Airport Code {model.DepartureAirportCode}");
-            //return Ok(model);
+            var query = new GetFlightByIdQuery(flightId);
+            var result = await _mediator.Send(query);
+            return result != null ? (IActionResult)Ok(result) : NotFound();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateOrder([FromBody] CreateOrderCommand command)
+        {
+            var id = await _mediator.Send(command);
+            return CreatedAtAction(nameof(GetOrder), new { Id = id }, id);
         }
     }
 }
