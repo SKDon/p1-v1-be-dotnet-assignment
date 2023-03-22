@@ -7,7 +7,7 @@ namespace API.Application.Validators
     {
         public GetFlightByIdValidator()
         {
-            RuleFor(c => c.Id).NotEmpty();
+            RuleFor(c => c.Code).NotEmpty();
         }
     }
 }

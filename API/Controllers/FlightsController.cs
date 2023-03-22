@@ -37,10 +37,10 @@ public class FlightsController : ControllerBase
         return Ok(result);
     }
 
-    [HttpGet("{flightId}")]
-    public async Task<IActionResult> GetFlight(Guid flightId)
+    [HttpGet("{airPortCode}")]
+    public async Task<IActionResult> GetFlight(string airPortCode)
     {
-        var query = new GetFlightByIdQuery(flightId);
+        var query = new GetFlightByIdQuery(airPortCode);
         var result = await _mediator.Send(query);
         return result != null ? (IActionResult)Ok(result) : NotFound();
     }

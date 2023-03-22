@@ -1,16 +1,17 @@
 ﻿using API.Application.ViewModels;
 using MediatR;
 using System;
+using System.Collections.Generic;
 
 namespace API.Application.Queries.GetFlightById
 {
-    public class GetFlightByIdQuery : IRequest<FlightViewModel>
+    public class GetFlightByIdQuery : IRequest<List<FlightViewModel>>
     {
-        public Guid Id { get; set; }
+        public string Code { get; set; }
 
-        public GetFlightByIdQuery(Guid id)
+        public GetFlightByIdQuery(string code)
         {
-            Id = id;
+            Code = code;
         }
     }
 }

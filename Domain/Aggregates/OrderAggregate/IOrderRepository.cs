@@ -11,6 +11,6 @@ namespace Domain.Aggregates.OrderAggregate
 
         Flight GetAsync(Guid flightId);
         Guid Add(Order order);
-        FlightRate GetOrderById(Guid flightId);
+        FlightRate GetOrderById(Guid flightId, string name);
     }
 }

@@ -33,7 +33,6 @@ namespace Infrastructure.Repositores
             throw new NotImplementedException();
         }
 
-
         public Task<FlightDto> GetAsync(Guid flightId)
         {
 
@@ -54,6 +53,34 @@ namespace Infrastructure.Repositores
 
             return Task.FromResult(result);
 
+        }
+
+        public async Task<List<Flight>> GetAllAsync()
+        {
+            return await _context.Flights.ToListAsync();
+        }
+
+        public async Task<List<FlightDto>> GetAllFlightsAsync(string airportCode)
+        {
+            var availableFlights = await (from flight in _context.Flights
+                                          join des in _context.Airports on flight.DestinationAirportId equals des.Id
+                                          join or in _context.Airports on flight.OriginAirportId equals or.Id
+                                          join t in _context.FlightRates on flight.Id equals t.FlightId
+                                          where des.Code == airportCode
+                                          && flight.Rates.Any(rate => rate.Available > 0)
+                                          select new FlightDto
+                                          {
+                                              Id = flight.Id,
+                                              DepartureAirportCode = or.Code,
+                                              ArrivalAirportCode = des.Code,
+                                              Departure = flight.Departure,
+                                              Arrival = flight.Arrival,
+                                              PriceFrom = flight.Rates.Where(rate => rate.Available > 0)
+                                                                             .Select(rate => rate.Price.Value)
+                                                                             .Min(),
+                                              Name = t.Name,
+                                          }).ToListAsync();
+            return availableFlights;
         }
 
 

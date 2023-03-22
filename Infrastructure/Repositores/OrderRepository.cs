@@ -41,9 +41,9 @@ namespace Infrastructure.Repositores
 
         }
 
-        public FlightRate GetOrderById(Guid flightId)
+        public FlightRate GetOrderById(Guid flightId, string name)
         {
-            return _context.FlightRates.SingleOrDefault(o => o.FlightId == flightId);
+            return _context.FlightRates.SingleOrDefault(o => o.FlightId == flightId && o.Name == name);
 
         }
 

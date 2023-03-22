@@ -23,7 +23,7 @@ namespace API.Application.Commands
 
         public async Task<FlightRate> Handle(OrderPlacedCommand request, CancellationToken cancellationToken)
         {
-            var order = _orderRepository.GetOrderById(request.Id);
+            var order = _orderRepository.GetOrderById(request.Id, request.Name);
 
             if (order == null)
                 throw new KeyNotFoundException($"Unable to modify order because an entry with Id: {request.Id} could not be found");
