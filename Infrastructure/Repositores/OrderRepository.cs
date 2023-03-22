@@ -1,6 +1,7 @@
 ﻿using Domain.Aggregates.FlightAggregate;
 using Domain.Aggregates.OrderAggregate;
 using Domain.SeedWork;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,17 +24,40 @@ namespace Infrastructure.Repositores
             _context = context;
         }
 
-        public Flight GetAsync(Guid flightId)
+        public void Update(Order order)
         {
-            return  _context.Flights.SingleOrDefault(o => o.Id == flightId);
+            _context.Orders.Update(order);
+
+            _context.SaveChangesAsync();
+        }
+
+        public FlightRate GetAsync(Order order)
+        {
+            return  _context.FlightRates.SingleOrDefault(o => o.FlightId == order.FlightRateId && o.Name == order.Name);
+        }
+
+        public Order GetOrderById(Guid orderId)
+        {
+            return _context.Orders.FirstOrDefault(o => o.Id == orderId);
         }
 
 
         public Guid Add(Order order)
         {
-            var result = GetAsync(order.Id);
+            var result = GetAsync(order);
 
-            var entity = _context.Flights.Update(result).Entity;
+            if (result == null)
+            {
+                throw new Exception("FlightRateId is incorrect..!");
+            }
+            else
+            {
+                order.OrderConfirmedDate = DateTime.UtcNow;
+                order.isConfirmed = true;
+                order.Price = result.Price.Value * order.Quantity;
+            }
+
+            var entity = _context.Orders.Add(order).Entity;
 
             _context.SaveChangesAsync();
 
@@ -41,9 +65,11 @@ namespace Infrastructure.Repositores
 
         }
 
-        public FlightRate GetOrderById(Guid flightId, string name)
+        public FlightRate GetFlightRateById(Guid flightId)
         {
-            return _context.FlightRates.SingleOrDefault(o => o.FlightId == flightId && o.Name == name);
+            var order = GetOrderById(flightId);
+
+            return _context.FlightRates.SingleOrDefault(o => o.FlightId == order.FlightRateId && o.Name == order.Name);
 
         }
 

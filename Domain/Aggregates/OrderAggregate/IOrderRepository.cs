@@ -8,9 +8,10 @@ namespace Domain.Aggregates.OrderAggregate
 {
     public interface IOrderRepository : IRepository<Order>
     {
-
-        Flight GetAsync(Guid flightId);
+        FlightRate GetAsync(Order order);
         Guid Add(Order order);
-        FlightRate GetOrderById(Guid flightId, string name);
+        FlightRate GetFlightRateById(Guid flightId);
+        Order GetOrderById(Guid orderId);
+        void Update(Order order);
     }
 }

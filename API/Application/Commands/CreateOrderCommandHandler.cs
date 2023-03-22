@@ -1,6 +1,8 @@
 ﻿using API.Application.ViewModels;
+using API.Mapping;
 using AutoMapper;
 using Domain.Aggregates.OrderAggregate;
+using Domain.SeedWork;
 using MediatR;
 using System;
 using System.Threading;
@@ -21,7 +23,8 @@ namespace API.Application.Commands
 
         public Task<Guid> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
         {
-            var order = _orderRepository.Add(new Order(request.Id, request.Name, request.Quantity));
+            var entity = request.ToCreateEntity();
+            var order = _orderRepository.Add(entity);
             return Task.FromResult(order);
         }
 
