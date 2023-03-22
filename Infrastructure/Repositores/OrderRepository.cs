@@ -53,7 +53,6 @@ namespace Infrastructure.Repositores
             else
             {
                 order.OrderConfirmedDate = DateTime.UtcNow;
-                order.isConfirmed = true;
                 order.Price = result.Price.Value * order.Quantity;
             }
 
@@ -68,7 +67,7 @@ namespace Infrastructure.Repositores
         public FlightRate GetFlightRateById(Guid flightId)
         {
             var order = GetOrderById(flightId);
-
+            order.isConfirmed = true;
             return _context.FlightRates.SingleOrDefault(o => o.FlightId == order.FlightRateId && o.Name == order.Name);
 
         }
