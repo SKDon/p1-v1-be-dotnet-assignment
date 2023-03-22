@@ -23,21 +23,22 @@ namespace API.Application.Commands
 
         public async Task<FlightRate> Handle(OrderPlacedCommand request, CancellationToken cancellationToken)
         {
-            var order = _orderRepository.GetFlightRateById(request.Id);
+            var entity= _orderRepository.GetFlightRateById(request.Id);
+            var order = _orderRepository.GetOrderById(request.Id);
 
-            if (order == null)
-                throw new KeyNotFoundException($"Unable to modify order because an entry with Id: {request.Id} could not be found");
+            if (entity== null)
+                throw new KeyNotFoundException($"Unable to modify entitybecause an entry with Id: {order.Id} could not be found");
 
-            if (order.Available < request.Quantity)
-                throw new ArgumentOutOfRangeException($"Unable to place order as the requested quantity ({request.Quantity}) is greater than the in stock quantity ({order.Available})");
+            if (entity.Available < order.Quantity)
+                throw new ArgumentOutOfRangeException($"Unable to place entityas the requested quantity ({order.Quantity}) is greater than the in stock quantity ({entity.Available})");
 
-            order.Available -= request.Quantity;
+            entity.Available -= order.Quantity;
 
             await _orderRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
 
-            Console.WriteLine($"Order has been confirmed Id: {order.FlightId}, Name: {order.Name}");
+            Console.WriteLine($"entityhas been confirmed Id: {entity.FlightId}, Name: {entity.Name}");
 
-            return order;
+            return entity;
 
 
 
